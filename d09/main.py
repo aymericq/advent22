@@ -17,15 +17,22 @@ def main():
             T_visited_positions.add(knots[9])
 
     print("T visited", len(T_visited_positions), "positions")
-    pretty_print_positions(knots)
+    pretty_print_positions(knots, T_visited_positions)
 
 
-def pretty_print_positions(knots):
-    print(knots)
-    min_x, max_x = min([knot[0] for knot in knots]), max([knot[0] for knot in knots])
-    min_y, max_y = min([knot[1] for knot in knots]), max([knot[1] for knot in knots])
-    pos_matrix = [['.'*(max_x - min_x + 1)] for _ in range(min_y, max_y+1)]
-    for i_row in range(len(pos_matrix)):
+def pretty_print_positions(knots, T_visited_positions):
+    all_pos = knots.copy()
+    all_pos.append((0, 0))
+    all_pos.extend(T_visited_positions)
+    min_x, max_x = min([knot[0] for knot in all_pos]), max([knot[0] for knot in all_pos])
+    min_y, max_y = min([knot[1] for knot in all_pos]), max([knot[1] for knot in all_pos])
+    pos_matrix = [['.']*(max_x - min_x + 1) for _ in range(min_y, max_y+1)]
+    pos_matrix[-min_y][-min_x] = 's'
+    for i_knot, knot in enumerate(knots):
+        pos_matrix[knot[1]-min_y][knot[0]-min_x] = str(i_knot) if pos_matrix[knot[1]-min_y][knot[0]-min_x][0] == '.' else pos_matrix[knot[1]-min_y][knot[0]-min_x][0]
+    for pos in T_visited_positions:
+        pos_matrix[pos[1]-min_y][pos[0]-min_x] = '#' if pos_matrix[pos[1]-min_y][pos[0]-min_x][0] == '.' else pos_matrix[pos[1]-min_y][pos[0]-min_x][0]
+    for i_row in range(len(pos_matrix)-1, -1, -1):
         print("".join(pos_matrix[i_row]))
 
 
@@ -33,14 +40,18 @@ def move_T(H, T):
     gap_x = T[0] - H[0]
     gap_y = T[1] - H[1]
 
-    if abs(gap_x) == 2:
+    if abs(gap_x) >= 2:
         if abs(gap_y) == 1:
             return (T[0] - gap_x//2, T[1] - gap_y)
+        elif abs(gap_y) == 2:
+            return (T[0] - gap_x//2, T[1] - gap_y//2)
         else:
             return (T[0] - gap_x//2, T[1])
-    elif abs(gap_y) == 2:
+    elif abs(gap_y) >= 2:
         if abs(gap_x) == 1:
             return (T[0] - gap_x, T[1] - gap_y//2)
+        elif abs(gap_x) == 2:
+            return (T[0] - gap_x//2, T[1] - gap_y//2)
         else:
             return (T[0], T[1] - gap_y//2)
     else:
