@@ -16,9 +16,9 @@ def main():
                 knots[i_knot] = move_T(knots[i_knot-1], knots[i_knot])
             T_visited_positions.add(knots[9])
 
-    print("T visited", len(T_visited_positions), "positions")
     pretty_print_positions(knots, T_visited_positions)
-
+    print("T visited", len(T_visited_positions), "positions")
+    
 
 def pretty_print_positions(knots, T_visited_positions):
     all_pos = knots.copy()
